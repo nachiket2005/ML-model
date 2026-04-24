@@ -25,6 +25,7 @@ pip-wheel-metadata/
 
 # Model and data files
 *.pkl
+!ai_student_satisfaction_model.pkl
 *.joblib
 data/
 
