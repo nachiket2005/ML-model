@@ -1,10 +1,10 @@
-# Lightweight Streamlit ML Predictor
+# Student Satisfaction Predictor (Streamlit)
 
-This minimal Streamlit app lets you upload a scikit-learn pickled model (`.pkl`) and a CSV of input rows to produce predictions.
+This Streamlit app uses a local scikit-learn model file (`ai_student_satisfaction_model.pkl`) to predict student satisfaction.
 
-Quick start
+## Quick Start
 
-1. Create a virtual environment and activate it.
+1. Create and activate a virtual environment.
 
 ```bash
 python -m venv .venv
@@ -14,24 +14,65 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
-2. Install dependencies and run the app.
+2. Install dependencies.
 
 ```bash
 pip install -r requirements.txt
+```
+
+3. Run the app.
+
+```bash
 streamlit run app.py
 ```
 
-How to use
+## How Input Works
 
-- Upload your trained scikit-learn model file (`.pkl`).
-- Upload a CSV where each row is a sample (columns correspond to the features the model expects), or paste a single-row CSV in the text box for one prediction.
-- Click `Run prediction` to view and download results.
+- The app reads expected feature names from the model (`feature_names_in_`).
+- The app auto-detects whether each feature accepts text or numeric values by testing model prediction behavior.
+- If a feature supports text, the UI shows a text box.
+- If a feature requires numeric input, the UI shows a number input.
+- For the current model (`RandomForestClassifier` without a preprocessing pipeline), categorical fields are numeric encoded values.
+- Batch CSV uploads must contain exactly the expected columns.
 
-Deployment
+## Version Compatibility
 
-- This app is intentionally minimal and works on Streamlit Cloud and most container platforms. Include the files in a git repo and connect to Streamlit Cloud, or build a small Docker image if preferred.
+The current model was trained with scikit-learn `1.6.1`. For safest compatibility, pin scikit-learn to that version:
 
-Notes
+```bash
+pip install scikit-learn==1.6.1
+```
 
-- The app does not assume feature names; it feeds the uploaded CSV columns directly to the model. Ensure your input columns match the model's training features and order.
-- Unpickling models requires the same library versions used when the model was saved. If unpickling fails, try matching scikit-learn versions locally.
+## Deployment
+
+### Option 1: Streamlit Community Cloud
+
+1. Push this folder to a GitHub repository.
+2. Ensure these files are in the repo root:
+	- `app.py`
+	- `requirements.txt`
+	- `ai_student_satisfaction_model.pkl`
+3. Go to Streamlit Community Cloud and create a new app from your repo.
+4. Set main file path to `app.py`.
+5. Deploy.
+
+### Option 2: Docker (Any Cloud VM/Container Platform)
+
+Create a `Dockerfile` like this:
+
+```dockerfile
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+EXPOSE 8501
+CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+```
+
+Build and run:
+
+```bash
+docker build -t student-satisfaction-app .
+docker run -p 8501:8501 student-satisfaction-app
+```
