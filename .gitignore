@@ -24,8 +24,8 @@ pip-wheel-metadata/
 .ipynb_checkpoints/
 
 # Model and data files
-*.pkl
-!ai_student_satisfaction_model.pkl
+
+
 *.joblib
 data/
 
