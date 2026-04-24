@@ -100,7 +100,17 @@ if not feature_names:
     st.stop()
 
 classes = list(getattr(model, "classes_", []))
-input_modes = get_input_modes_cached(model, feature_names)
+auto_detect_input_types = st.toggle(
+    "Auto-detect text-compatible fields (slower startup)",
+    value=False,
+    help="Keep this off for fastest startup. Turn on only if your model needs raw text inputs.",
+)
+
+if auto_detect_input_types:
+    input_modes = get_input_modes_cached(model, feature_names)
+else:
+    input_modes = {f: "numeric" for f in feature_names}
+
 text_features = [f for f in feature_names if input_modes.get(f) == "text"]
 numeric_features = [f for f in feature_names if input_modes.get(f) == "numeric"]
 
