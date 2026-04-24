@@ -50,7 +50,13 @@ pip install scikit-learn==1.6.1
 This repo includes `runtime.txt` with `python-3.11` for platforms that read runtime version from that file.
 This repo also includes `.python-version` set to `3.11` for platforms that prefer that file.
 
-If Streamlit Cloud still shows Python 3.14 in logs after pushing these files, open app settings and trigger a full reboot/redeploy so the environment is rebuilt with the new runtime.
+If Streamlit Cloud still shows Python 3.14 in logs after pushing these files, set Python explicitly in Community Cloud:
+1. Open app settings.
+2. Click Advanced settings.
+3. Set Python version to 3.11.
+4. Save and trigger a full reboot/redeploy.
+
+Community Cloud defaults to the newest supported Python if not explicitly selected.
 
 ### Option 1: Streamlit Community Cloud
 
