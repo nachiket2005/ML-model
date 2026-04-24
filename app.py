@@ -52,6 +52,21 @@ def infer_feature_input_modes(model, feature_names: list[str]) -> dict[str, str]
     return modes
 
 
+def get_input_modes_cached(model, feature_names: list[str]) -> dict[str, str]:
+    """Compute input modes once per session for the current model/feature set."""
+    model_sig = f"{model.__class__.__name__}:{','.join(feature_names)}"
+    cache_key = "_input_modes_cache"
+
+    if cache_key not in st.session_state:
+        st.session_state[cache_key] = {}
+
+    cache = st.session_state[cache_key]
+    if model_sig not in cache:
+        cache[model_sig] = infer_feature_input_modes(model, feature_names)
+
+    return cache[model_sig]
+
+
 def validate_input_columns(df: pd.DataFrame, required_columns: list[str]) -> tuple[bool, str]:
     missing = [c for c in required_columns if c not in df.columns]
     extra = [c for c in df.columns if c not in required_columns]
@@ -85,7 +100,7 @@ if not feature_names:
     st.stop()
 
 classes = list(getattr(model, "classes_", []))
-input_modes = infer_feature_input_modes(model, feature_names)
+input_modes = get_input_modes_cached(model, feature_names)
 text_features = [f for f in feature_names if input_modes.get(f) == "text"]
 numeric_features = [f for f in feature_names if input_modes.get(f) == "numeric"]
 

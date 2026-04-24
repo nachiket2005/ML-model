@@ -4,6 +4,8 @@ This Streamlit app uses a local scikit-learn model file (`ai_student_satisfactio
 
 ## Quick Start
 
+Use Python 3.11 for local and cloud consistency.
+
 1. Create and activate a virtual environment.
 
 ```bash
@@ -44,6 +46,8 @@ pip install scikit-learn==1.6.1
 ```
 
 ## Deployment
+
+This repo includes `runtime.txt` with `python-3.11` for platforms that read runtime version from that file.
 
 ### Option 1: Streamlit Community Cloud
 
